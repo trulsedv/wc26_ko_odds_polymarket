@@ -1,0 +1,9 @@
+[project]
+name = "wc26-ko-odds-polymarket"
+version = "0.1.0"
+description = "Polymarket API client for World Cup 2026 knockout stage markets"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "requests>=2.31.0",
+]
