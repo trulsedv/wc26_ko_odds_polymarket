@@ -10,12 +10,14 @@ def get_wc26_prices() -> dict[str, dict[str, dict[str, float]]]:
     """Return dict of nations with yes/no prices for each knockout round."""
     base_url = "https://gamma-api.polymarket.com"
 
+    with Path("nations.json").open(encoding="utf-8") as f:
+        nations = json.load(f)
+
     with Path("event_ids.json").open(encoding="utf-8") as f:
         events_ids = json.load(f)
 
     result = {}
     session = requests.Session()
-    session.headers.update({"User-Agent": "wc26-ko-odds/1.0", "Accept": "application/json"})
 
     for round_name, event_id in events_ids.items():
         response = session.get(f"{base_url}/events", params={"id": event_id}, timeout=30)
@@ -30,7 +32,7 @@ def get_wc26_prices() -> dict[str, dict[str, dict[str, float]]]:
             prices = json.loads(market["outcomePrices"])
             yes_price = float(prices[0])
             no_price = float(prices[1])
-            team_name = get_team_name(team_name)
+            team_name = get_team_name(team_name, nations)
             if team_name is None:
                 continue
             if team_name not in result:
@@ -44,10 +46,8 @@ def get_wc26_prices() -> dict[str, dict[str, dict[str, float]]]:
     return result
 
 
-def get_team_name(team: str) -> str | None:
+def get_team_name(team: str, nations: dict[str, list[str]]) -> str | None:
     """Return the official team name from the nations.json mapping."""
-    with Path("nations.json").open(encoding="utf-8") as f:
-        nations = json.load(f)
     for official_name, aliases in nations.items():
         if team == official_name or team in aliases:
             return official_name
@@ -59,4 +59,4 @@ if __name__ == "__main__":
     print("World Cup 2026 Prices:")
     for team, rounds in prices.items():
         for round_name, yes_no in rounds.items():
-            print(f"{team:22s} | {round_name:15s} | Yes: {yes_no['yes']:.4f} | No: {yes_no['no']:.4f}")
+            print(f"{team:22s} | {round_name:15s} | {100 * yes_no['yes']:5.2f} %")
