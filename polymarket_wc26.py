@@ -1,86 +1,57 @@
-"""
-Fetch World Cup 2026 yes/no prices for all nations from Polymarket Gamma API.
-Returns: {"Brazil": {"Round of 16": {"yes": 0.6287, "no": 0.3713}}, ...}
-"""
+"""Fetch World Cup 2026 yes/no prices for all nations from Polymarket Gamma API."""
+
+import json
+from pathlib import Path
 
 import requests
 
 
 def get_wc26_prices() -> dict[str, dict[str, dict[str, float]]]:
     """Return dict of nations with yes/no prices for each knockout round."""
-    
-    BASE_URL = "https://gamma-api.polymarket.com"
-    
-    # Event slugs for the 5 World Cup 2026 stages
-    EVENTS = {
-        "world-cup-nation-to-reach-round-of-16": "Round of 16",
-        "world-cup-nation-to-reach-quarterfinals": "Quarterfinals",
-        "world-cup-nation-to-reach-semifinals": "Semifinals", 
-        "world-cup-nation-to-reach-final": "Final",
-        "world-cup-winner": "Winner"
-    }
-    
+    base_url = "https://gamma-api.polymarket.com"
+
+    with Path("event_ids.json").open(encoding="utf-8") as f:
+        events_ids = json.load(f)
+
     result = {}
     session = requests.Session()
     session.headers.update({"User-Agent": "wc26-ko-odds/1.0", "Accept": "application/json"})
-    
-    for slug, round_name in EVENTS.items():
-        # Get event
-        response = session.get(f"{BASE_URL}/events", params={"limit": 100, "query": slug}, timeout=30)
+
+    for round_name, event_id in events_ids.items():
+        response = session.get(f"{base_url}/events", params={"id": event_id}, timeout=30)
         response.raise_for_status()
-        event = next((e for e in response.json() if e.get("slug") == slug), None)
-        
-        if not event:
-            continue
-            
-        # Get markets for this event
-        response = session.get(f"{BASE_URL}/markets", params={"event_id": event["id"], "limit": 500}, timeout=30)
-        response.raise_for_status()
-        markets = response.json()
-        
-        # Process each market
+        event = response.json()[0]
+        markets = event["markets"]
+
         for market in markets:
-            outcomes = market.get("outcomes", [])
-            prices = market.get("outcomePrices", [])
-            question = market.get("question", "")
-            
-            if len(outcomes) != len(prices):
+            if market["active"] is False:
                 continue
-                
-            # Extract team name from question or outcomes
-            team_name = None
-            if len(outcomes) > 2:  # Multi-outcome: each outcome is a team
-                for i, outcome in enumerate(outcomes):
-                    clean_name = _clean_team_name(outcome)
-                    if clean_name:
-                        team_name = clean_name
-                        yes_price = float(prices[i])
-                        no_price = 1.0 - yes_price
-                        break
-            elif len(outcomes) == 2:  # Binary yes/no market
-                team_name = _clean_team_name(question)
-                outcome_map = {outcomes[i]: float(prices[i]) for i in range(2)}
-                yes_price = outcome_map.get("Yes", 0.0)
-                no_price = outcome_map.get("No", 0.0)
-            
-            if team_name:
-                if team_name not in result:
-                    result[team_name] = {}
-                result[team_name][round_name] = {"yes": yes_price, "no": no_price}
-    
+            team_name = market["groupItemTitle"]
+            prices = json.loads(market["outcomePrices"])
+            yes_price = float(prices[0])
+            no_price = float(prices[1])
+            team_name = get_team_name(team_name)
+            if team_name is None:
+                continue
+            if team_name not in result:
+                result[team_name] = {}
+            result[team_name][round_name] = {"yes": yes_price, "no": no_price}
+            if yes_price + no_price > 1:
+                print(f"Warning: yes/no prices for {team_name} in {round_name} sum to more than 1: {yes_price + no_price:.4f}")
+
     session.close()
+    result = dict(sorted(result.items()))
     return result
 
 
-def _clean_team_name(text: str) -> str | None:
-    """Extract clean team name from text."""
-    text = text.strip()
-    for word in ["Will", "will", "the", "to", "reach", "round", "of", "16", "quarterfinals", 
-                 "semifinals", "final", "winner", "world", "cup", "2026", "fifa", "nation", 
-                 "team", "?", ":", "-", "|"]:
-        text = text.replace(word, "").strip()
-    text = " ".join(text.split())
-    return text.title() if text and len(text.split()) <= 3 else None
+def get_team_name(team: str) -> str | None:
+    """Return the official team name from the nations.json mapping."""
+    with Path("nations.json").open(encoding="utf-8") as f:
+        nations = json.load(f)
+    for official_name, aliases in nations.items():
+        if team == official_name or team in aliases:
+            return official_name
+    return None
 
 
 if __name__ == "__main__":
@@ -88,7 +59,4 @@ if __name__ == "__main__":
     print("World Cup 2026 Prices:")
     for team, rounds in prices.items():
         for round_name, yes_no in rounds.items():
-            print(f"{team:15s} | {round_name:15s} | Yes: {yes_no['yes']:.4f} | No: {yes_no['no']:.4f}")
-    
-    if not prices:
-        print("No data available. Events may not be in Gamma API yet.")
+            print(f"{team:22s} | {round_name:15s} | Yes: {yes_no['yes']:.4f} | No: {yes_no['no']:.4f}")
