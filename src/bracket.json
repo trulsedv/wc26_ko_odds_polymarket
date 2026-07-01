@@ -1,0 +1,150 @@
+{
+    "advancement": {
+        "Round of 32": "Round of 16",
+        "Round of 16": "Quarterfinals",
+        "Quarterfinals": "Semifinals",
+        "Semifinals": "Final",
+        "Final": "Winner"
+    },
+    "bracket": {
+        "Round of 32": {
+            "Match 1": {
+                "Team A": "Germany",
+                "Team B": "Paraguay",
+                "Winner": "Paraguay"
+            },
+            "Match 2": {
+                "Team A": "France",
+                "Team B": "Sweden"
+            },
+            "Match 3": {
+                "Team A": "South Africa",
+                "Team B": "Canada",
+                "Winner": "Canada"
+            },
+            "Match 4": {
+                "Team A": "Netherlands",
+                "Team B": "Morocco",
+                "Winner": "Morocco"
+            },
+            "Match 5": {
+                "Team A": "Portugal",
+                "Team B": "Croatia"
+            },
+            "Match 6": {
+                "Team A": "Spain",
+                "Team B": "Austria"
+            },
+            "Match 7": {
+                "Team A": "United States",
+                "Team B": "Bosnia and Herzegovina"
+            },
+            "Match 8": {
+                "Team A": "Belgium",
+                "Team B": "Senegal"
+            },
+            "Match 9": {
+                "Team A": "Brazil",
+                "Team B": "Japan",
+                "Winner": "Brazil"
+            },
+            "Match 10": {
+                "Team A": "Ivory Coast",
+                "Team B": "Norway",
+                "Winner": "Norway"
+            },
+            "Match 11": {
+                "Team A": "Mexico",
+                "Team B": "Ecuador"
+            },
+            "Match 12": {
+                "Team A": "England",
+                "Team B": "DR Congo"
+            },
+            "Match 13": {
+                "Team A": "Argentina",
+                "Team B": "Cape Verde"
+            },
+            "Match 14": {
+                "Team A": "Australia",
+                "Team B": "Egypt"
+            },
+            "Match 15": {
+                "Team A": "Switzerland",
+                "Team B": "Algeria"
+            },
+            "Match 16": {
+                "Team A": "Colombia",
+                "Team B": "Ghana"
+            }
+        },
+        "Round of 16": {
+            "Match 17": {
+                "Team A": "Paraguay",
+                "Team B": "Match 2"
+            },
+            "Match 18": {
+                "Team A": "Canada",
+                "Team B": "Morocco"
+            },
+            "Match 19": {
+                "Team A": "Match 5",
+                "Team B": "Match 6"
+            },
+            "Match 20": {
+                "Team A": "Match 7",
+                "Team B": "Match 8"
+            },
+            "Match 21": {
+                "Team A": "Brazil",
+                "Team B": "Norway"
+            },
+            "Match 22": {
+                "Team A": "Match 11",
+                "Team B": "Match 12"
+            },
+            "Match 23": {
+                "Team A": "Match 13",
+                "Team B": "Match 14"
+            },
+            "Match 24": {
+                "Team A": "Match 15",
+                "Team B": "Match 16"
+            }
+        },
+        "Quarterfinals": {
+            "Match 25": {
+                "Team A": "Match 17",
+                "Team B": "Match 18"
+            },
+            "Match 26": {
+                "Team A": "Match 19",
+                "Team B": "Match 20"
+            },
+            "Match 27": {
+                "Team A": "Match 21",
+                "Team B": "Match 22"
+            },
+            "Match 28": {
+                "Team A": "Match 23",
+                "Team B": "Match 24"
+            }
+        },
+        "Semifinals": {
+            "Match 29": {
+                "Team A": "Match 25",
+                "Team B": "Match 26"
+            },
+            "Match 30": {
+                "Team A": "Match 27",
+                "Team B": "Match 28"
+            }
+        },
+        "Final": {
+            "Match 31": {
+                "Team A": "Match 29",
+                "Team B": "Match 30"
+            }
+        }
+    }
+}

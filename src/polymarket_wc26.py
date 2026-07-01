@@ -10,10 +10,10 @@ def get_wc26_prices() -> dict[str, dict[str, dict[str, float]]]:
     """Return dict of nations with yes/no prices for each knockout round."""
     base_url = "https://gamma-api.polymarket.com"
 
-    with Path("nations.json").open(encoding="utf-8") as f:
+    with Path("src/nations.json").open(encoding="utf-8") as f:
         nations = json.load(f)
 
-    with Path("event_ids.json").open(encoding="utf-8") as f:
+    with Path("src/event_ids.json").open(encoding="utf-8") as f:
         events_ids = json.load(f)
 
     result = {}
